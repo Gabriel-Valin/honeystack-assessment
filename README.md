@@ -30,7 +30,7 @@ Every data source in this project was created for test purposes. If any request 
 
 ### Code Quality and Readability
 Configuration and Libs:
-- The application needs some environment vars to startup correctly, for this reason I would put a env parse validator by runtime like [zod](https://zod.dev/) or [env-schema](https://www.npmjs.com/package/env-schema) ensuring application doesn't start without env vars;
+- The application needs some environment vars to startup correctly, for this reason I would put a env parse validator by runtime like [zod](https://zod.dev/) or [env-schema](https://www.npmjs.com/package/env-schema) ensuring application doesn't starts without env vars;
 - Update libraries from project.
 	- The current version of [@hubspot/api-client](https://www.npmjs.com/package/@hubspot/api-client) is 13.0.0
 	- Express don't need `body-parser` 
@@ -80,7 +80,7 @@ Change to ES Modules
 - Use external tools to storage sensitive info (API Keys, Database Credentials) like Amazon Web Secrets or Vault from HashCorp 
 
 ### Bonus
-If this application will receives HTTP Request to execute some action or do some job I would change the express to fastify
+If this application will handle HTTP Requests to execute some action or do some job I would change the express to fastify
 - Fastify uses fast-json-stringify by Matteo Collina with built-in functions based on schemas for serialize objects too fast
 - Fastify uses a radix tree for routing - a compact and optimized tree built during server setup.
 - It’s minimalist, with a strong focus on core performance
