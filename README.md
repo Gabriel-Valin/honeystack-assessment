@@ -24,7 +24,7 @@ Every data source in this project was created for test purposes. If any request 
 
 ## Execution Code - 2 hours work (Screenshot)
 - I followed the "design code" from application and give my contributions on Debrief section
-![honeystack-run](https://i.imgur.com/Yl9fELW.png)
+![honeystack-run](https://i.imgur.com/O8VMCFU.png)
 
 ## Debrief
 
@@ -54,7 +54,7 @@ Change to ES Modules
 
 ### Project architecture
 - Node.JS was made to work with modules, each file in Node.JS represents a module.
-- The Hubspot integrations would be moved to a single module like `src/libs/hubspot-client.ts`
+- The Hubspot integrations can would be moved to a single module like `src/libs/hubspot-client.ts`
 - Despite the methods `processContacts` `processCompanies` `processMeetings` has integration with Hubspot, they are methods which implement business rules, adapt these methods for not depends on Hubspot client directly is a good approach.
 - `Domain.js` represents a schema from mongodb not a real entity from system. Changing the name to `DomainSchema` can correct the misunderstanding
 - Organizing structure folder like:

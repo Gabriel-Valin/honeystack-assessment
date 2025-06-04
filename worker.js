@@ -206,13 +206,14 @@ const processMeetings = async (domain, hubId, q) => {
 
     console.log('fetch contacts from meetings...')
     offsetObject.after = parseInt(searchResult.paging?.next?.after);
+    const participants = []
 
     for (const meeting of data) {
       if (!meeting.properties) continue;
       const meetingId = meeting.id;
       const isCreated = new Date(meeting.createdAt) > lastPulledDate;
 
-      let meetingAssociateContactEmail = null
+
       try {
         const associations = await (await hubspotClient.apiRequest({
           method: 'get',
@@ -223,17 +224,19 @@ const processMeetings = async (domain, hubId, q) => {
 
         for (const contactId of contactIds) {
           const contactData = await hubspotClient.crm.contacts.basicApi.getById(contactId, ['firstname', 'lastname', 'email']);
-          meetingAssociateContactEmail = contactData.properties.email;
+          participants.push(contactData.properties.email)
         }
       } catch (e) {
         console.error(`Error on fetch participants from MeetingID: ${meetingId}`, e);
       }
 
+      console.log([...new Set(participants)])
+      // using Set to remove equal values 
       const actionTemplate = {
         includeInAnalytics: 0,
         identity: meetingId,
+        contactEmails: [...new Set(participants)],
         metadata: {
-          contactEmail: meetingAssociateContactEmail,
           meetingTitle: meeting.properties.hs_meeting_title,
           startTime: meeting.properties.hs_meeting_start_time,
           endTime: meeting.properties.hs_meeting_end_time,
