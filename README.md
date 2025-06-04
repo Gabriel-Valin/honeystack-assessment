@@ -35,6 +35,7 @@ Configuration and Libs:
 	- The current version of [@hubspot/api-client](https://www.npmjs.com/package/@hubspot/api-client) is 13.0.0
 	- Express don't need `body-parser` 
 	- Nowadays [date-fns](https://date-fns.org/) is better than moment.js
+  - Express current version: 5.1.0, project: 4.18.2
 
 Bad Practices
 
@@ -67,7 +68,7 @@ Change to ES Modules
 	- src/config/env-config.js
 
 ### Performance, Tools and Observability
-- Replace `forEach` to `await Promise.all()` or `await Promise.allSetled()` if the function not depends each other.
+- Replace `forEach` to `await Promise.all()` or `await Promise.allSetled()` if functions doesn't depends each other.
 	- `forEach` doesn't work with `await` and stuck the event loop
 - Change the manual timestamps calculus to validate library 
 - "Cheat" for rate limiting `offsetObject?.after >= 9900`, change this for a config property 
@@ -77,3 +78,19 @@ Change to ES Modules
 - Implementing structured logs, [pino](https://www.npmjs.com/package/pino) can be a good choice, very fast and low overhead Node.JS logger
 - Alerts when job finished
 - Use external tools to storage sensitive info (API Keys, Database Credentials) like Amazon Web Secrets or Vault from HashCorp 
+
+### Bonus
+If this application will receives HTTP Request to execute some action or do some job I would change the express to fastify
+- Fastify uses fast-json-stringify by Matteo Collina with built-in functions based on schemas for serialize objects too fast
+- Fastify uses a radix tree for routing - a compact and optimized tree built during server setup.
+- It’s minimalist, with a strong focus on core performance
+- Native validation using JSON Schema via Ajv
+
+Express working as well but for optimization...
+
+- Express uses JSON.stringify for serialize objects
+- Linear routing based on route definition
+- Minimalist but depends on directly middlewares
+- No native validation
+
+**Unit and integration tests.**
