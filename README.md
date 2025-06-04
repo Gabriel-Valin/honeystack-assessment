@@ -22,4 +22,54 @@ The implementation of the server and the ```server.js``` is not important for th
 
 Every data source in this project was created for test purposes. If any request takes more than 5 seconds to execute, there is something wrong with the implementation.
 
-# honeystack-assessment
+## Debrief
+
+### Code Quality and Readability
+Configuration and Libs:
+- The application needs some environment vars to startup correctly, for this reason I would put a env parse validator by runtime like [zod](https://zod.dev/) or [env-schema](https://www.npmjs.com/package/env-schema) ensuring application doesn't start without env vars;
+- Update libraries from project.
+	- The current version of [@hubspot/api-client](https://www.npmjs.com/package/@hubspot/api-client) is 13.0.0
+	- Express don't need `body-parser` 
+	- Nowadays [date-fns](https://date-fns.org/) is better than moment.js
+
+Bad Practices
+
+```js
+app.locals.moment = moment;
+app.locals.version = process.env.version;
+app.locals.NODE_ENV = NODE_ENV;
+```
+
+- Set "global" vars for Express APP is a bad thing to do for sure
+- If you need set a API version use prefix in API 
+
+Change to ES Modules
+- Better readability
+- Work as well with linters, type checkers and bundlers
+
+
+### Project architecture
+- Node.JS was made to work with modules, each file in Node.JS represents a module.
+- The Hubspot integrations would be moved to a single module like `src/libs/hubspot-client.ts`
+- Despite the methods `processContacts` `processCompanies` `processMeetings` has integration with Hubspot, they are methods which implement business rules, adapt these methods for not depends on Hubspot client directly is a good approach.
+- `Domain.js` represents a schema from mongodb not a real entity from system. Changing the name to `DomainSchema` can correct the misunderstanding
+- Organizing structure folder like:
+	- src/services/process-meetings.js
+	- src/services/process-companies.js
+	- src/services/process-contacts.js
+	- src/libs/hubspot-api-client.js
+	- src/http/app.js
+	- src/server.js
+	- src/config/env-config.js
+
+### Performance, Tools and Observability
+- Replace `forEach` to `await Promise.all()` or `await Promise.allSetled()` if the function not depends each other.
+	- `forEach` doesn't work with `await` and stuck the event loop
+- Change the manual timestamps calculus to validate library 
+- "Cheat" for rate limiting `offsetObject?.after >= 9900`, change this for a config property 
+- Transform app to a `JobProcessorApplication` , a dedicated application which process async jobs and running cron jobs
+	- Change the `queue` method from `async` lib to BullMQ with redis or any message broker with `node-cron` to trigger a new job (rabbitMQ, SNS/SQS, kafka)
+	- Retry exponential back off
+- Implementing structured logs, [pino](https://www.npmjs.com/package/pino) can be a good choice, very fast and low overhead Node.JS logger
+- Alerts when job finished
+- Use external tools to storage sensitive info (API Keys, Database Credentials) like Amazon Web Secrets or Vault from HashCorp 
